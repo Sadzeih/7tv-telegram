@@ -5,7 +5,7 @@ import (
 	"github.com/Sadzeih/bttv-telegram/twitch"
 )
 
-func getEmotes() (Emotes, error) {
+func getEmotes(query string) (Emotes, error) {
 	emotes := make(Emotes, 0)
 
 	twitchEmotes, err := twitch.GlobalEmotes()
@@ -14,11 +14,11 @@ func getEmotes() (Emotes, error) {
 	}
 	emotes = append(emotes, ConvertTwitchEmotes(twitchEmotes)...)
 
-	trendingBttv, err := bttv.TrendingEmotes()
+	searchBTTV, err := bttv.SearchEmotes(query)
 	if err != nil {
 		return nil, err
 	}
-	emotes = append(emotes, ConvertBTTVEmotes(trendingBttv)...)
+	emotes = append(emotes, ConvertBTTVEmotes(searchBTTV)...)
 
 	globalBttv, err := bttv.GlobalEmotes()
 	if err != nil {

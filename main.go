@@ -25,7 +25,7 @@ func main() {
 	}
 
 	b.Handle(tb.OnQuery, func(q *tb.Query) {
-		emotes, err := getEmotes()
+		emotes, err := getEmotes(q.Text)
 		if err != nil {
 			log.Println(err)
 			return

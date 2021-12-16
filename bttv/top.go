@@ -9,7 +9,7 @@ import (
 
 const (
 	trendingEndpoint = "https://api.betterttv.net/3/emotes/shared/trending"
-	limit            = 50
+	trendingLimit    = 50
 )
 
 type trendingResponse struct {
@@ -26,16 +26,16 @@ func TrendingEmotes() (Emotes, error) {
 	}
 
 	for i := 0; i < 4; i++ {
-		offset := i * limit
+		offset := i * trendingLimit
 
 		queryValues := url.Query()
-		queryValues.Set("limit", fmt.Sprintf("%d", limit))
+		queryValues.Set("limit", fmt.Sprintf("%d", trendingLimit))
 		queryValues.Set("offset", fmt.Sprintf("%d", offset))
 		url.RawQuery = queryValues.Encode()
 
 		resp, err := http.Get(url.String())
 		if err != nil {
-			return nil, fmt.Errorf("could not fetch %d-%d trending emotes: %w", offset, offset+i*limit, err)
+			return nil, fmt.Errorf("could not fetch %d-%d trending emotes: %w", offset, offset+i*trendingLimit, err)
 		}
 
 		if resp.StatusCode != 200 {
