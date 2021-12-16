@@ -25,14 +25,14 @@ func main() {
 	}
 
 	b.Handle(tb.OnQuery, func(q *tb.Query) {
+		var emotes Emotes
+		if q.Text == "" {
+			return
+		}
 		emotes, err := getEmotes(q.Text)
 		if err != nil {
 			log.Println(err)
 			return
-		}
-
-		if q.Text != "" {
-			emotes = SearchEmotes(q.Text, emotes)
 		}
 		emotes = emotes[:int(math.Min(50, float64(len(emotes))))]
 

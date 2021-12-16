@@ -13,6 +13,7 @@ func getEmotes(query string) (Emotes, error) {
 		return nil, err
 	}
 	emotes = append(emotes, ConvertTwitchEmotes(twitchEmotes)...)
+	emotes = SearchEmotes(query, emotes)
 
 	searchBTTV, err := bttv.SearchEmotes(query)
 	if err != nil {
@@ -25,6 +26,7 @@ func getEmotes(query string) (Emotes, error) {
 		return nil, err
 	}
 	emotes = append(emotes, ConvertBTTVEmotes(globalBttv)...)
+	emotes = SearchEmotes(query, emotes)
 
 	return emotes, nil
 }
