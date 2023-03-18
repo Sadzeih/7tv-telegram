@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/Sadzeih/bttv-telegram/pkg/emote"
 	"log"
 	"math"
 	"os"
+	"strconv"
 
 	tb "gopkg.in/tucnak/telebot.v2"
 )
@@ -25,7 +27,7 @@ func main() {
 	}
 
 	b.Handle(tb.OnQuery, func(q *tb.Query) {
-		var emotes Emotes
+		var emotes []emote.Emote
 		if q.Text == "" {
 			return
 		}
@@ -36,23 +38,24 @@ func main() {
 		}
 		emotes = emotes[:int(math.Min(50, float64(len(emotes))))]
 
-		results := make(tb.Results, 0)
-		for _, emote := range emotes {
+		results := make(tb.Results, len(emotes))
+		for i, e := range emotes {
 			var result tb.Result
-			switch emote.Type {
+			switch e.Type {
 			case "png":
 				result = &tb.PhotoResult{
-					Title:       emote.Name,
-					Description: emote.Name,
-					URL:         emote.URL,
-					ThumbURL:    emote.URL,
+					URL:      e.URL,
+					ThumbURL: e.URL,
+					Width:    e.Width,
+					Height:   e.Height,
 				}
-
-			case "gif":
+			case "gif", "webp":
 				result = &tb.GifResult{
-					Title:    emote.Name,
-					URL:      emote.URL,
-					ThumbURL: emote.URL,
+					URL:       e.URL,
+					ThumbURL:  e.URL,
+					ThumbMIME: "image/gif",
+					Width:     e.Width,
+					Height:    e.Height,
 				}
 
 			default:
@@ -62,13 +65,13 @@ func main() {
 			if result == nil {
 				continue
 			}
-			result.SetResultID(emote.ID)
-			results = append(results, result)
+			result.SetResultID(strconv.Itoa(i + 1))
+			results[i] = result
 		}
 
 		err = b.Answer(q, &tb.QueryResponse{
 			Results:   results,
-			CacheTime: 60,
+			CacheTime: 0,
 		})
 		if err != nil {
 			log.Println(err)
